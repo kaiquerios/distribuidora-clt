@@ -1,0 +1,54 @@
+[23:01:34] PCN - CLT Distribuidora S.A.
+[23:01:34] Stack: Alpine Linux 3.19 + SQLite + Docker
+[23:01:34] Nivel de incidente: P1 - CRITICO
+[23:01:36] Clientes em producao:
+1|Auto Pecas Nobre|12.345.678/0001-99
+2|Oficina Central|23.456.789/0001-88
+3|Concessionaria Sul|34.567.890/0001-77
+4|Mecanica Rapida|45.678.901/0001-66
+5|Distribuidora Norte|56.789.012/0001-55
+[23:01:38] WAF detectou requisicao maliciosa no endpoint /buscar-peca
+[23:01:39] Query maliciosa interceptada:
+[23:01:40] Query bypassa autenticacao e acessa tabela de clientes!
+[23:01:41] DADOS VAZADOS: tabela de clientes exfiltrada!
+[23:01:41] Expostos: nomes, CNPJs e e-mails de 5 clientes B2B
+[23:01:41] Evidencia salva em: logs/dados_vazados.txt
+[23:01:42] Servidor sobrecarregado - derrubando container de producao...
+[23:01:44] PRODUCAO OFFLINE - CRM INDISPONIVEL
+[23:01:46] SIEM confirmou: SQL Injection + indisponibilidade total
+[23:01:46] Coordenador de Incidentes acionado
+[23:01:46] DPO notificado - dados pessoais expostos (LGPD)
+[23:01:46] Prazo de 72h para notificar a ANPD iniciado (Art. 48)
+[23:01:46] Timestamp: 22/05/2026 23:01:46
+[23:01:48] Producao indisponivel - ativando DR...
+[23:01:49] DR integro - 5 clientes disponiveis
+[23:01:50] Redirecionando trafego do CRM para o DR...
+[23:01:51] FAILOVER CONCLUIDO - clt-dr assumiu a operacao!
+[23:01:53] Corrigindo vulnerabilidade de SQL Injection...
+[23:01:54] Causa raiz: concatenacao direta de string na query
+[23:01:54] Correcao: queries parametrizadas em todos os endpoints
+[23:01:54] Regras do WAF atualizadas
+[23:01:54] Reiniciando container de producao com correcoes...
+[23:01:59] Container clt-producao reiniciado e corrigido!
+[23:01:59] Banco de producao ok - 5 clientes
+[23:02:00] Ambiente principal corrigido - iniciando failback...
+[23:02:01] Passo 1: Sincronizando dados do DR para producao...
+[23:02:02] Pedidos no DR sincronizados: 5
+[23:02:02] Sincronizacao concluida - zero perda de dados
+[23:02:03] Passo 2: Validando ambiente principal...
+[23:02:06] Todos os testes passaram - producao pronta!
+[23:02:07] Passo 3: Migrando usuarios de volta (gradual)...
+[23:02:07]   Equipe interna migrada
+[23:02:08]   Representantes externos migrados
+[23:02:09] FAILBACK CONCLUIDO!
+[23:02:09] Passo 4: Monitoramento intensivo iniciado (48 horas)
+[23:02:09] Passo 5: DR retornando ao modo standby
+[23:02:11] Notificacao formal preparada para ANPD (LGPD Art. 48)
+[23:02:11] Dados expostos: nomes, CNPJs e e-mails de 5 clientes
+[23:02:11] Comunicado aos clientes aguardando aprovacao juridica
+[23:02:11] INCIDENTE ENCERRADO - OPERACAO NORMALIZADA
+[23:02:11] Failover: DR assumiu dentro do RTO de 8h (BIA)
+[23:02:11] Failback: retorno seguro ao ambiente principal
+[23:02:11] Vulnerabilidade corrigida: queries parametrizadas
+[23:02:11] LGPD: notificacao ANPD dentro do prazo de 72h
+[23:02:11] Logs salvos em: logs/cenario2.log e logs/dados_vazados.txt

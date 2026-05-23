@@ -1,0 +1,33 @@
+services:
+
+  producao:
+    build: ./docker/producao
+    container_name: clt-producao
+    hostname: srv-producao
+    volumes:
+      - dados-producao:/app/banco
+      - dados-backup:/app/backup
+      - ./logs:/app/logs
+    networks:
+      - rede-clt
+    restart: unless-stopped
+
+  dr:
+    build: ./docker/dr
+    container_name: clt-dr
+    hostname: srv-dr
+    volumes:
+      - dados-dr:/app/banco
+      - ./logs:/app/logs
+    networks:
+      - rede-clt
+    restart: unless-stopped
+
+volumes:
+  dados-producao:
+  dados-backup:
+  dados-dr:
+
+networks:
+  rede-clt:
+    driver: bridge

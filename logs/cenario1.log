@@ -1,0 +1,40 @@
+[22:56:01] PCN - CLT Distribuidora S.A.
+[22:56:01] Stack: Alpine Linux 3.19 + SQLite + Docker
+[22:56:01] Nivel de incidente: P1 - CRITICO
+[22:56:02] Container clt-producao ONLINE (Alpine Linux)
+[22:56:03] Clientes no banco: 5
+[22:56:03] Pedidos ativos: 5
+[22:56:03] Arquivo do banco: -rw-r--r--    1 root     root       16.0K May 23 01:50 /app/banco/clt.db
+[22:56:05] ALERTA: comportamento anomalo detectado!
+[22:56:05] EDR identificou processo criptografando arquivos criticos
+[22:56:06] Simulando criptografia do banco de dados...
+[22:56:07] Estado do banco apos ataque: LEIA-ME.txt
+clt.db.LOCKED
+[22:56:07] SISTEMA COMPROMETIDO - CRM INDISPONIVEL
+[22:56:07] Mensagem do atacante: Pague 10 BTC para recuperar seus dados
+[22:56:09] Coordenador de Incidentes acionado via canal dedicado
+[22:56:09] Canal de crise aberto: #incidente-p1-ransomware
+[22:56:09] DPO notificado - possivel exposicao de dados pessoais (LGPD)
+[22:56:09] Timestamp: 22/05/2026 22:56:09
+[22:56:11] Isolando container de producao da rede...
+[22:56:11] Container clt-producao ISOLADO da rede
+[22:56:11] Integracoes com ERPs suspensas
+[22:56:11] ATENCAO: container NAO derrubado - memoria preservada para forense
+[22:56:13] Verificando backup WORM...
+[22:56:14] Backup WORM encontrado: total 16K    
+-rw-r--r--    1 root     root       16.0K May 23 01:50 clt_backup.db
+[22:56:14] Hash MD5 verificado: ed46c7d3d9869daf851e4a9e1cdec6b7  /app/backup/clt_backup.db
+[22:56:15] Removendo arquivos criptografados...
+[22:56:16] Restaurando banco a partir do backup WORM...
+[22:56:17] Restore concluido!
+[22:56:17] Container reconectado a rede
+[22:56:18] Validando dados recuperados...
+[22:56:21] Todos os dados validados - banco 100% integro!
+[22:56:21] Patch de seguranca aplicado no container
+[22:56:21] Notificacao preparada para ANPD - prazo 72h (LGPD Art. 48)
+[22:56:21] Equipe comercial informada - CRM disponivel
+[22:56:21] Sistema liberado para os usuarios
+[22:56:21] INCIDENTE ENCERRADO COM SUCESSO
+[22:56:21] Downtime: dentro do RTO de 4h definido na BIA
+[22:56:21] Dados recuperados: 100% - RPO respeitado
+[22:56:21] Log salvo em: logs/cenario1.log
