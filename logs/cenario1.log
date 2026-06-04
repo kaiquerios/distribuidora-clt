@@ -1,0 +1,25 @@
+[23:01:08] Verificando estado do servidor de producao...
+[23:01:19] Clientes no banco (srv-producao): 5
+[23:01:28] Pedidos ativos (srv-producao): 5
+[23:01:34] Arquivo do banco: -rw-r--r--    1 root     root       16.0K Jun  4 22:41 /app/banco/clt.db
+[23:02:21] ALERTA: conexao nao autorizada detectada em srv-producao!
+[23:02:21] EDR identificou processo suspeito iniciando criptografia
+[23:02:22] Gerando chave de criptografia Fernet (AES-128)...
+[23:02:23] Chave gerada: yDDGS1JBGgU_L6TkrbDlKkD5wWEE9NyT... [truncada]
+[23:02:23] Chave retida pelo atacante - sem ela nao ha descriptografia!
+[23:03:14] Baixando banco de dados do servidor de producao...
+[23:03:19] Banco baixado com sucesso!
+[23:03:19] Banco criptografado com AES-128!
+[23:03:19] Tamanho original: 16384 bytes
+[23:03:19] Tamanho criptografado: 21944 bytes
+[23:03:45] Estado do banco em srv-producao:
+    LEIA-ME.txt
+clt.db
+clt.db.locked
+[23:03:45] SISTEMA COMPROMETIDO - CRM INDISPONIVEL
+[23:03:45] Mensagem: Pague 10 BTC para recuperar seus dados
+[23:05:25] Coordenador de Incidentes acionado via canal dedicado
+[23:05:25] Canal de crise aberto: #incidente-p1-ransomware
+[23:05:25] DPO notificado - possivel exposicao de dados pessoais
+[23:05:25] Timestamp oficial: 04/06/2026 23:05:25
+[23:05:49] Isolando srv-producao da rede interna...
