@@ -1,9 +1,24 @@
 services:
 
+  atacante:
+    build: ./docker/atacante
+    container_name: clt-atacante
+    hostname: srv-atacante
+    ports:
+      - "2221:22"
+    volumes:
+      - ./scripts:/scripts
+      - ./logs:/logs
+    networks:
+      - rede-clt
+    restart: unless-stopped
+
   producao:
     build: ./docker/producao
     container_name: clt-producao
     hostname: srv-producao
+    ports:
+      - "2222:22"
     volumes:
       - dados-producao:/app/banco
       - dados-backup:/app/backup
@@ -16,6 +31,8 @@ services:
     build: ./docker/dr
     container_name: clt-dr
     hostname: srv-dr
+    ports:
+      - "2223:22"
     volumes:
       - dados-dr:/app/banco
       - ./logs:/app/logs

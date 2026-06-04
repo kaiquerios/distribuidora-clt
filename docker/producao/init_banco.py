@@ -40,9 +40,11 @@ def criar_banco(path):
     conn.close()
     print(f"[OK] Banco criado: {path}")
 
-criar_banco(DB_PATH)
-shutil.copy2(DB_PATH, BACKUP_PATH)
-print(f"[OK] Backup WORM criado: {BACKUP_PATH}")
-print("[OK] Container producao ONLINE...")
-while True:
-    time.sleep(60)
+if not os.path.exists(DB_PATH):
+    criar_banco(DB_PATH)
+    shutil.copy2(DB_PATH, BACKUP_PATH)
+    print(f"[OK] Backup WORM criado: {BACKUP_PATH}")
+else:
+    print(f"[OK] Banco ja existe: {DB_PATH}")
+
+print("[OK] Container producao pronto!")

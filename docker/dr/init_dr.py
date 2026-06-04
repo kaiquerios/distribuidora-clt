@@ -1,4 +1,4 @@
-import sqlite3, time
+import sqlite3, os
 
 DB_PATH = "/app/banco/clt_dr.db"
 
@@ -39,7 +39,10 @@ def criar_banco_dr(path):
     conn.close()
     print(f"[OK] Banco DR criado: {path}")
 
-criar_banco_dr(DB_PATH)
-print("[STANDBY] Container DR ONLINE - aguardando failover...")
-while True:
-    time.sleep(60)
+if not os.path.exists(DB_PATH):
+    criar_banco_dr(DB_PATH)
+    print("[OK] Banco DR pronto!")
+else:
+    print("[OK] Banco DR ja existe!")
+
+print("[STANDBY] Container DR aguardando failover...")
