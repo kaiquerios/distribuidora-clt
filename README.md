@@ -61,7 +61,7 @@ Rede interna: distribuidora-clt_rede-clt (bridge)
 
 ---
 
-## Estrutura de Arquivos
+## Estrutura do Repo
 
 ```
 distribuidora-clt/
@@ -94,9 +94,9 @@ distribuidora-clt/
 
 O banco SQLite da CLT Distribuidora contém três tabelas:
 
-**clientes** — 5 registros (oficinas e concessionárias B2B)  
-**pedidos** — 5 pedidos ativos de peças automotivas  
-**catalogo** — 5 peças com código, preço e estoque
+**clientes:** 5 registros (oficinas e concessionárias B2B)  
+**pedidos:** 5 pedidos ativos de peças automotivas  
+**catalogo:** 5 peças com código, preço e estoque
 
 ---
 

@@ -129,7 +129,11 @@ aguardar("Derrubar o servidor de producao?")
 
 log("Sobrecarregando srv-producao com requisicoes maliciosas...", C.E, "!!! ")
 time.sleep(1)
-subprocess.run(["docker", "stop", "clt-producao"], capture_output=True)
+exec_ssh("srv-producao",
+    "echo '[CRIT] Servidor sobrecarregado - encerrando servicos...' >> /app/logs/incidente.log && "
+    "killall sshd || true"
+)
+time.sleep(2)
 time.sleep(1)
 log("PRODUCAO OFFLINE - CRM INDISPONIVEL", C.E, "!!! ")
 print(f"\n  srv-producao: {C.E}[OFFLINE]{C.R}")
@@ -196,8 +200,11 @@ time.sleep(0.8)
 log("Regras do WAF atualizadas para bloquear payloads similares", C.V)
 log("Reiniciando srv-producao com correcoes aplicadas...", C.A)
 
-subprocess.run(["docker", "start", "clt-producao"], capture_output=True)
-time.sleep(5)
+exec_ssh("srv-producao",
+    "mv /app/banco/clt.db.offline /app/banco/clt.db && "
+    "echo '[OK] srv-producao restaurado com correcoes aplicadas' >> /app/logs/incidente.log"
+)
+time.sleep(1)
 
 # 1 conexao SSH: verificar banco + registrar correcao (1 senha)
 CMD_REMEDIAR = (

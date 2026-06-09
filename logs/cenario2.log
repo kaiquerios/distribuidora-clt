@@ -1,15 +1,27 @@
-[00:53:45] Atacante: srv-atacante
-[00:53:45] Alvo:     srv-producao
-[00:53:55] Clientes cadastrados em srv-producao:
-1|Auto Pecas Nobre|12.345.678/0001-99
-2|Oficina Central|23.456.789/0001-88
-3|Concessionaria Sul|34.567.890/0001-77
-4|Mecanica Rapida|45.678.901/0001-66
-5|Distribuidora Norte|56.789.012/0001-55
-[00:54:29] srv-dr em standby e sincronizado
-[00:54:40] Varrendo endpoints do CRM em busca de vulnerabilidades...
-[00:54:41] Endpoint vulneravel encontrado: /buscar-peca?nome=
-[00:54:41] Injetando payload malicioso:
-[00:54:53] Dados vazados e salvos pelo atacante!
-[00:54:53] Expostos: nomes, CNPJs e e-mails de 5 clientes B2B
-[00:54:53] Historico salvo em: /logs/dados_vazados.txt
+[01:17:53] Atacante: srv-atacante
+[01:17:53] Alvo:     srv-producao
+[01:28:14] Clientes cadastrados em srv-producao:
+
+[01:28:19] srv-dr em standby e sincronizado
+[01:28:23] Varrendo endpoints do CRM em busca de vulnerabilidades...
+[01:28:24] Endpoint vulneravel encontrado: /buscar-peca?nome=
+[01:28:24] Injetando payload malicioso:
+[01:28:31] Dados vazados e salvos pelo atacante!
+[01:28:31] Expostos: nomes, CNPJs e e-mails de 5 clientes B2B
+[01:28:31] Historico salvo em: /logs/dados_vazados.txt
+[01:29:01] Sobrecarregando srv-producao com requisicoes maliciosas...
+[01:29:10] PRODUCAO OFFLINE - CRM INDISPONIVEL
+[01:30:13] Confirmado SQL Injection e indisponibilidade total
+[01:30:13] Coordenador de Incidentes acionado
+[01:30:13] DPO notificado (LGPD)
+[01:30:13] Prazo de 72h para ANPD iniciado: 09/06/2026 01:30:13
+[01:35:52] Producao indisponivel, verificando DR...
+[01:36:05] DR integro - 5 clientes disponiveis
+[01:36:05] DR integro - 5 pedidos disponiveis
+[01:36:05] Redirecionando trafego do CRM para srv-dr...
+[01:36:06] FAILOVER CONCLUIDO - srv-dr assumiu a operacao!
+[01:36:28] Corrigindo vulnerabilidade de SQL Injection...
+[01:36:29] A causa raiz foi uma concatenacao direta de string na query SQL
+[01:36:29] A solução seria queries parametrizadas em todos os endpoints
+[01:36:30] Regras do WAF atualizadas para bloquear payloads similares
+[01:36:30] Reiniciando srv-producao com correcoes aplicadas...
