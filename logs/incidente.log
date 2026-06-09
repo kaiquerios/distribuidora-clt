@@ -1,0 +1,13 @@
+[OK] Sistema CRM operando normalmente
+[OK] Equipe de vendas registrando pedidos
+[CRIT] transferencia de dados detectada!
+[CRIT] /app/banco/clt.db REMOVIDO!
+[CRIT] CRM INDISPONIVEL - banco inacessivel!
+[CSIRT] Incidente P1 confirmado
+[CSIRT] Canal de crise: #incidente-p1-ransomware
+[CSIRT] Timestamp oficial: 08/06/2026 23:48:15
+[OK] Sistema CRM operando normalmente
+[OK] Equipe de vendas registrando pedidos
+[CRIT] SQL Injection confirmado, tabela clientes invadida!
+[CRIT] Dados expostos: nomes, CNPJs e e-mails de 5 clientes B2B
+[CRIT] CRM INDISPONIVEL, servidor sobrecarregado!

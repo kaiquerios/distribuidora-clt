@@ -1,25 +1,45 @@
-[23:01:08] Verificando estado do servidor de producao...
-[23:01:19] Clientes no banco (srv-producao): 5
-[23:01:28] Pedidos ativos (srv-producao): 5
-[23:01:34] Arquivo do banco: -rw-r--r--    1 root     root       16.0K Jun  4 22:41 /app/banco/clt.db
-[23:02:21] ALERTA: conexao nao autorizada detectada em srv-producao!
-[23:02:21] EDR identificou processo suspeito iniciando criptografia
-[23:02:22] Gerando chave de criptografia Fernet (AES-128)...
-[23:02:23] Chave gerada: yDDGS1JBGgU_L6TkrbDlKkD5wWEE9NyT... [truncada]
-[23:02:23] Chave retida pelo atacante - sem ela nao ha descriptografia!
-[23:03:14] Baixando banco de dados do servidor de producao...
-[23:03:19] Banco baixado com sucesso!
-[23:03:19] Banco criptografado com AES-128!
-[23:03:19] Tamanho original: 16384 bytes
-[23:03:19] Tamanho criptografado: 21944 bytes
-[23:03:45] Estado do banco em srv-producao:
+[23:42:32] CLT Distribuidora S.A. - Simulacao de Incidente P1
+[23:42:32] Stack: Alpine Linux 3.19 + Fernet (AES-128) + Docker
+[23:42:32] Atacante: srv-atacante
+[23:42:32] Alvo:     srv-producao
+[23:46:50] Verificando estado do servidor alvo...
+[23:47:04] Clientes em srv-producao: 5
+[23:47:04] Pedidos ativos: 5
+[23:47:04] Arquivo do banco: -rw-r--r--    1 root     root       16.0K Jun  8 23:40 /app/banco/clt.db
+[23:47:12] Iniciando conexao nao autorizada com srv-producao...
+[23:47:13] Conexao estabelecida! Mapeando sistema de arquivos...
+[23:47:14] Gerando chave de criptografia Fernet (AES-128)...
+[23:47:14] Chave gerada: VC8Jpimwuulb_WZtJ4KJdYSIwHLHyulAMowxRLRH...
+[23:47:14] Chave retida pelo atacante - sem ela nao ha recuperacao!
+[23:47:31] Baixando banco de dados de srv-producao...
+[23:47:49] Banco baixado com sucesso!
+[23:47:49] Criptografando 16384 bytes com AES-128...
+[23:47:50] Arquivo criptografado: 21944 bytes
+[23:48:00] Estado do banco em srv-producao:
     LEIA-ME.txt
-clt.db
 clt.db.locked
-[23:03:45] SISTEMA COMPROMETIDO - CRM INDISPONIVEL
-[23:03:45] Mensagem: Pague 10 BTC para recuperar seus dados
-[23:05:25] Coordenador de Incidentes acionado via canal dedicado
-[23:05:25] Canal de crise aberto: #incidente-p1-ransomware
-[23:05:25] DPO notificado - possivel exposicao de dados pessoais
-[23:05:25] Timestamp oficial: 04/06/2026 23:05:25
-[23:05:49] Isolando srv-producao da rede interna...
+[23:48:00] SISTEMA COMPROMETIDO - CRM INDISPONIVEL
+[23:48:00] Mensagem: Pague 10 BTC para recuperar seus dados
+[23:48:15] Coordenador de Incidentes acionado
+[23:48:15] Canal de crise: #incidente-p1-ransomware
+[23:48:15] DPO notificado - possivel exposicao de dados pessoais
+[23:48:15] Timestamp: 08/06/2026 23:48:15
+[23:49:08] Isolando srv-producao da rede via iptables...
+[23:49:18] srv-producao ISOLADO da rede
+[23:49:18] Integracoes com ERPs suspensas
+[23:49:18] Servidor NAO desligado - memoria preservada para forense
+[23:49:25] Verificando backup WORM e executando restore...
+[23:50:03] Arquivos criptografados removidos
+[23:50:03] Restore concluido!
+[23:50:05] Validando integridade dos dados...
+[23:50:10] Patch de seguranca aplicado
+[23:50:28] Notificacao preparada para ANPD - prazo 72h (LGPD Art. 48)
+[23:50:28] Equipe comercial informada - CRM disponivel
+[23:50:28] Sistema liberado para os usuarios
+[23:50:28] INCIDENTE ENCERRADO COM SUCESSO
+[23:50:28] Downtime: dentro do RTO de 4h definido na BIA
+[23:50:28] Dados recuperados: 100% via backup WORM
+[23:50:28] Criptografia real: Fernet AES-128
+[23:50:28] Chave do atacante salva em: /logs/chave_ransomware.key
+[23:50:28] Log do atacante:  /logs/cenario1.log
+[23:50:28] Log da producao:  /app/logs/incidente.log
