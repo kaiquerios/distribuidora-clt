@@ -1,11 +1,9 @@
 """
 CENARIO 2 - SQL Injection + Failover + Failback
-
 """
 
 import subprocess, time, datetime, os
 
-# ── Cores ────────────────────────────────────────────────────
 class C:
     R ="\033[0m"
     V ="\033[92m"
@@ -54,17 +52,15 @@ def status(nome):
 os.makedirs("/logs", exist_ok=True)
 open("/logs/cenario2.log", "w").close()
 
-# Limpar logs dos servidores antes de iniciar
 exec_ssh("srv-producao",
     "mkdir -p /app/logs && > /app/logs/incidente.log")
 exec_ssh("srv-dr",
     "mkdir -p /app/logs && > /app/logs/incidente_dr.log")
 
-# ════════════════════════════════════════════════════════════
 sep("CENARIO 2 - SQL INJECTION + FAILOVER + FAILBACK", C.CI)
 log(f"Atacante: srv-atacante", C.CI)
 log(f"Alvo:     srv-producao", C.E, ">>> ")
-aguardar("Aperte ENTER para iniciar...")
+aguardar("Iniciar...")
 
 # ════════════════════════════════════════════════════════════
 # FASE 1 - 1 conexao SSH producao + 1 conexao SSH dr
@@ -136,7 +132,7 @@ aguardar("Derrubar o servidor de producao?")
 log("Sobrecarregando srv-producao com requisicoes maliciosas...", C.E, "!!! ")
 time.sleep(1)
 exec_ssh("srv-producao",
-    "echo '[CRIT] Servidor sobrecarregado - encerrando servicos...' >> /app/logs/incidente.log && "
+    "echo '[CRIT] Servidor sobrecarregado, encerrando servicos...' >> /app/logs/incidente.log && "
     "killall sshd || true"
 )
 time.sleep(2)
@@ -145,7 +141,7 @@ log("PRODUCAO OFFLINE - CRM INDISPONIVEL", C.E, "!!! ")
 print(f"\n  srv-producao: {C.E}[OFFLINE]{C.R}")
 print(f"  srv-dr:       {C.V}[ONLINE]{C.R}\n")
 
-aguardar("ENTER para acionar o CSIRT e ativar o DR...")
+aguardar("Acionar o CSIRT e ativar o DR?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 3 - 1 conexao SSH dr (logs do acionamento)
@@ -192,7 +188,7 @@ log("FAILOVER CONCLUIDO - srv-dr assumiu a operacao!", C.V, ">>> ")
 print(f"\n  srv-producao: {C.E}[OFFLINE]{C.R}")
 print(f"  srv-dr:       {C.V}[ONLINE]{C.R} {C.V}(ATIVO){C.R}\n")
 
-aguardar("ENTER para remediar a vulnerabilidade e restaurar producao...")
+aguardar("Remediar a vulnerabilidade e restaurar producao?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 5 - reiniciar producao + 1 conexao SSH producao (correcao)
@@ -221,7 +217,7 @@ CMD_REMEDIAR = (
 out, _ = exec_ssh("srv-producao", CMD_REMEDIAR)
 log(f"srv-producao reiniciado - {out.split(chr(10))[0]} clientes no banco", C.V)
 
-aguardar("ENTER para iniciar o failback...")
+aguardar("Iniciar o failback?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 6 - 1 conexao SSH producao (validar) + 1 conexao SSH dr (sincronizar)

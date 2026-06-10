@@ -67,13 +67,9 @@ exec_ssh("srv-producao",
 
 # ════════════════════════════════════════════════════════════
 sep("CENARIO 1 - ATAQUE DE RANSOMWARE", C.CI)
-log("CLT Distribuidora S.A. - Simulacao de Incidente P1")
-log("Stack: Alpine Linux 3.19 + Fernet (AES-128) + Docker")
 log(f"Atacante: srv-atacante", C.CI)
 log(f"Alvo:     srv-producao", C.E, ">>> ")
-print(f"\n  {C.A}Abra o PuTTY da producao e rode:{C.R}")
-print(f"  {C.B}tail -f /app/logs/incidente.log{C.R}\n")
-aguardar("Producao monitorando? ENTER para iniciar...")
+aguardar("Iniciar...")
 
 # ════════════════════════════════════════════════════════════
 # FASE 1 - 1 conexao SSH (leitura + logs)
@@ -100,7 +96,7 @@ log(f"Clientes em srv-producao: {clientes}", C.V)
 log(f"Pedidos ativos: {pedidos}", C.V)
 log(f"Arquivo do banco: {banco}", C.V)
 
-aguardar("Sistema normal confirmado. ENTER para simular o ataque...")
+aguardar("Sistema normal confirmado. ENTER para começar o ataque...")
 
 # ════════════════════════════════════════════════════════════
 # FASE 2 - 1 conexao SCP (baixar) + 1 conexao SSH (comprometer) + 1 SCP (enviar)
@@ -120,7 +116,7 @@ time.sleep(0.5)
 with open("/logs/chave_ransomware.key", "wb") as f:
     f.write(CHAVE)
 
-aguardar("ENTER para criptografar o banco de dados...")
+aguardar("Criptografar o banco de dados?")
 
 # SCP 1: baixar o banco (1 senha)
 log("Baixando banco de dados de srv-producao...", C.A)
@@ -143,18 +139,18 @@ if os.path.exists("/tmp/clt.db"):
     # SSH: remover banco original, criar nota, registrar logs — tudo em 1 conexao (1 senha)
     CMD_COMPROMETER = (
         "rm -f /app/banco/clt.db && "
-        "echo 'RANSOMWARE: Pague 10 BTC - hacker@dark.net' > /app/banco/LEIA-ME.txt && "
+        "echo 'RANSOMWARE: Vc foi hackeado!' > /app/banco/LEIA-ME.txt && "
         "echo '[CRIT] transferencia de dados detectada!' >> /app/logs/incidente.log && "
         "echo '[CRIT] /app/banco/clt.db REMOVIDO!' >> /app/logs/incidente.log && "
-        "echo '[CRIT] CRM INDISPONIVEL - banco inacessivel!' >> /app/logs/incidente.log && "
+        "echo '[CRIT] CRM INDISPONIVEL, banco inacessivel!' >> /app/logs/incidente.log && "
         "ls /app/banco/"
     )
     out, _ = exec_ssh("srv-producao", CMD_COMPROMETER)
     log(f"Estado do banco em srv-producao:\n    {out}", C.E)
 
-log("SISTEMA COMPROMETIDO - CRM INDISPONIVEL", C.E, "!!! ")
-log("Mensagem: Pague 10 BTC para recuperar seus dados", C.E, "!!! ")
-aguardar("ENTER para acionar o CSIRT...")
+log("SISTEMA COMPROMETIDO | CRM INDISPONIVEL", C.E, "!!! ")
+log("Mensagem: Pague 5k de dolares para recuperar os seus dados", C.E, "!!! ")
+aguardar("Acionar o CSIRT?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 3 - 1 conexao SSH (logs do CSIRT)
@@ -172,7 +168,7 @@ CMD_CSIRT = (
     f"echo '[CSIRT] Timestamp oficial: {ts}' >> /app/logs/incidente.log"
 )
 exec_ssh("srv-producao", CMD_CSIRT)
-aguardar("ENTER para iniciar a contencao...")
+aguardar("Iniciar a contencao?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 4 - 1 conexao SSH (isolar + log)
@@ -190,8 +186,8 @@ exec_ssh("srv-producao", CMD_CONTENCAO)
 time.sleep(0.5)
 log("srv-producao ISOLADO da rede", C.V)
 log("Integracoes com ERPs suspensas", C.A)
-log("Servidor NAO desligado - memoria preservada para forense", C.CI)
-aguardar("ENTER para restaurar via backup WORM...")
+log("Servidor NAO desligado e memoria preservada para forense", C.CI)
+aguardar("Restaurar via backup WORM?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 5 - 1 conexao SSH (liberar + verificar + restore + log)
@@ -222,7 +218,7 @@ if md5_info:
 
 log("Arquivos criptografados removidos", C.A)
 log("Restore concluido!", C.V)
-aguardar("ENTER para validar os dados recuperados...")
+aguardar("Validar os dados recuperados?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 6 - 1 conexao SSH (validar 3 tabelas + log)
@@ -255,7 +251,7 @@ for i, tabela in enumerate(tabelas):
 if todos_ok:
     log("Todos os dados validados - banco 100% integro!", C.V)
 log("Patch de seguranca aplicado", C.V)
-aguardar("ENTER para encerrar o incidente...")
+aguardar("Encerrar o incidente?")
 
 # ════════════════════════════════════════════════════════════
 # FASE 7 - 1 conexao SSH (log final)
@@ -264,11 +260,11 @@ sep("FASE 7 - ENCERRAMENTO", C.CI)
 
 CMD_ENCERRAR = (
     "echo '[OK] CRM liberado para os usuarios' >> /app/logs/incidente.log && "
-    "echo '[LGPD] Notificacao ANPD preparada - prazo 72h iniciado' >> /app/logs/incidente.log"
+    "echo '[LGPD] Notificacao ANPD preparada, prazo 72h iniciado' >> /app/logs/incidente.log"
 )
 exec_ssh("srv-producao", CMD_ENCERRAR)
 
-log("Notificacao preparada para ANPD - prazo 72h (LGPD Art. 48)", C.A)
+log("Notificacao preparada para ANPD (LGPD Art. 48)", C.A)
 log("Equipe comercial informada - CRM disponivel", C.V)
 log("Sistema liberado para os usuarios", C.V)
 

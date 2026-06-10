@@ -1,0 +1,45 @@
+[00:13:05] CLT Distribuidora S.A. - Simulacao de Incidente P1
+[00:13:05] Stack: Alpine Linux 3.19 + Fernet (AES-128) + Docker
+[00:13:05] Atacante: srv-atacante
+[00:13:05] Alvo:     srv-producao
+[00:13:26] Verificando estado do servidor alvo...
+[00:13:35] Clientes em srv-producao: 5
+[00:13:35] Pedidos ativos: 5
+[00:13:35] Arquivo do banco: -rw-r--r--    1 root     root       16.0K Jun 10 00:08 /app/banco/clt.db
+[00:16:49] Iniciando conexao nao autorizada com srv-producao...
+[00:16:50] Conexao estabelecida! Mapeando sistema de arquivos...
+[00:16:51] Gerando chave de criptografia Fernet (AES-128)...
+[00:16:51] Chave gerada: fkTaL5P1hXCZAoPExsdWE__7zH1MWoicCtaamZWg...
+[00:16:51] Chave retida pelo atacante - sem ela nao ha recuperacao!
+[00:17:20] Baixando banco de dados de srv-producao...
+[00:17:25] Banco baixado com sucesso!
+[00:17:25] Criptografando 16384 bytes com AES-128...
+[00:17:26] Arquivo criptografado: 21944 bytes
+[00:17:33] Estado do banco em srv-producao:
+    LEIA-ME.txt
+clt.db.locked
+[00:17:33] SISTEMA COMPROMETIDO - CRM INDISPONIVEL
+[00:17:33] Mensagem: Pague 10 BTC para recuperar seus dados
+[00:20:12] Coordenador de Incidentes acionado
+[00:20:12] Canal de crise: #incidente-p1-ransomware
+[00:20:12] DPO notificado - possivel exposicao de dados pessoais
+[00:20:12] Timestamp: 10/06/2026 00:20:12
+[00:22:26] Isolando srv-producao da rede via iptables...
+[00:22:31] srv-producao ISOLADO da rede
+[00:22:31] Integracoes com ERPs suspensas
+[00:22:31] Servidor NAO desligado - memoria preservada para forense
+[00:22:44] Verificando backup WORM e executando restore...
+[00:23:08] Arquivos criptografados removidos
+[00:23:08] Restore concluido!
+[00:23:11] Validando integridade dos dados...
+[00:23:16] Patch de seguranca aplicado
+[00:23:25] Notificacao preparada para ANPD - prazo 72h (LGPD Art. 48)
+[00:23:25] Equipe comercial informada - CRM disponivel
+[00:23:25] Sistema liberado para os usuarios
+[00:23:25] INCIDENTE ENCERRADO COM SUCESSO
+[00:23:25] Downtime: dentro do RTO de 4h definido na BIA
+[00:23:25] Dados recuperados: 100% via backup WORM
+[00:23:25] Criptografia real: Fernet AES-128
+[00:23:25] Chave do atacante salva em: /logs/chave_ransomware.key
+[00:23:25] Log do atacante:  /logs/cenario1.log
+[00:23:25] Log da producao:  /app/logs/incidente.log
