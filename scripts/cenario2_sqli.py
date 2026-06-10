@@ -54,6 +54,12 @@ def status(nome):
 os.makedirs("/logs", exist_ok=True)
 open("/logs/cenario2.log", "w").close()
 
+# Limpar logs dos servidores antes de iniciar
+exec_ssh("srv-producao",
+    "mkdir -p /app/logs && > /app/logs/incidente.log")
+exec_ssh("srv-dr",
+    "mkdir -p /app/logs && > /app/logs/incidente_dr.log")
+
 # ════════════════════════════════════════════════════════════
 sep("CENARIO 2 - SQL INJECTION + FAILOVER + FAILBACK", C.CI)
 log(f"Atacante: srv-atacante", C.CI)

@@ -1,12 +1,5 @@
 """
 CENARIO 1 - Ataque de Ransomware com criptografia Fernet (AES)
-CLT Distribuidora S.A.
-
-Executar de dentro do container atacante via PuTTY:
-  python3 /scripts/cenario1_ransomware.py
-
-Na producao, monitorar em tempo real:
-  tail -f /app/logs/incidente.log
 """
 
 import subprocess, time, datetime, os
@@ -68,6 +61,9 @@ def exec_scp_enviar(host, origem, destino):
 
 os.makedirs("/logs", exist_ok=True)
 open("/logs/cenario1.log", "w").close()
+
+exec_ssh("srv-producao",
+    "mkdir -p /app/logs && > /app/logs/incidente.log")
 
 # ════════════════════════════════════════════════════════════
 sep("CENARIO 1 - ATAQUE DE RANSOMWARE", C.CI)
