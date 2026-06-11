@@ -1,56 +1,56 @@
-[00:31:19] Atacante: srv-atacante
-[00:31:19] Alvo:     srv-producao
-[00:34:22] Clientes cadastrados em srv-producao:
+[22:51:29] Atacante: srv-atacante
+[22:51:29] Alvo:     srv-producao
+[22:52:20] Clientes cadastrados em srv-producao:
 1|Auto Pecas Nobre|12.345.678/0001-99
 2|Oficina Central|23.456.789/0001-88
 3|Concessionaria Sul|34.567.890/0001-77
 4|Mecanica Rapida|45.678.901/0001-66
 5|Distribuidora Norte|56.789.012/0001-55
-[00:34:34] srv-dr em standby e sincronizado
-[00:34:53] Varrendo endpoints do CRM em busca de vulnerabilidades...
-[00:34:54] Endpoint vulneravel encontrado: /buscar-peca?nome=
-[00:34:55] Injetando payload malicioso:
-[00:35:16] Dados vazados e salvos pelo atacante!
-[00:35:16] Expostos: nomes, CNPJs e e-mails de 5 clientes B2B
-[00:35:16] Historico salvo em: /logs/dados_vazados.txt
-[00:37:11] Sobrecarregando srv-producao com requisicoes maliciosas...
-[00:37:18] PRODUCAO OFFLINE - CRM INDISPONIVEL
-[00:38:01] Confirmado SQL Injection e indisponibilidade total
-[00:38:01] Coordenador de Incidentes acionado
-[00:38:01] DPO notificado (LGPD)
-[00:38:01] Prazo de 72h para ANPD iniciado: 10/06/2026 00:38:01
-[00:38:18] Producao indisponivel, verificando DR...
-[00:38:38] DR integro - 5 clientes disponiveis
-[00:38:38] DR integro - 5 pedidos disponiveis
-[00:38:38] Redirecionando trafego do CRM para srv-dr...
-[00:38:39] FAILOVER CONCLUIDO - srv-dr assumiu a operacao!
-[00:38:43] Corrigindo vulnerabilidade de SQL Injection...
-[00:38:44] A causa raiz foi uma concatenacao direta de string na query SQL
-[00:38:44] A solução seria queries parametrizadas em todos os endpoints
-[00:38:44] Regras do WAF atualizadas para bloquear payloads similares
-[00:38:44] Reiniciando srv-producao com correcoes aplicadas...
-[00:39:22] srv-producao reiniciado - 5 clientes no banco
-[00:39:28] Ambiente principal corrigido, iniciar failback.
-[00:39:29] Passo 1: Sincronizando dados do DR para producao...
-[00:39:49] Pedidos sincronizados do DR: 5
-[00:39:49] Zero perda de dados confirmada
-[00:39:50] Passo 2: Validando ambiente principal...
-[00:39:59] Todos os testes passaram!
-[00:40:02] Passo 3: Migrando usuarios de volta de forma gradual...
-[00:40:03]   Equipe interna migrada com sucesso
-[00:40:03]   Representantes externos migrados com sucesso
-[00:40:04] FAILBACK CONCLUIDO!
-[00:40:04] Monitoramento intensivo ativado
-[00:40:04] srv-dr retornando ao modo standby
-[00:40:49] Notificacao formal preparada para ANPD (LGPD Art. 48)
-[00:40:49] Dados expostos: nomes, CNPJs e e-mails de 5 clientes B2B
-[00:40:49] Comunicado aos clientes aguardando aprovacao juridica
-[00:40:49] INCIDENTE ENCERRADO - OPERACAO NORMALIZADA
-[00:40:49] Failover: DR assumiu dentro do RTO de 8h (BIA)
-[00:40:49] Failback: retorno seguro ao ambiente principal
-[00:40:49] Vulnerabilidade corrigida: queries parametrizadas
-[00:40:49] LGPD: notificacao ANPD dentro do prazo de 72h
-[00:40:49] Log do atacante:  /logs/cenario2.log
-[00:40:49] Log da producao:  /app/logs/incidente.log
-[00:40:49] Log do DR:        /app/logs/incidente_dr.log
-[00:40:49] Evidencias:       /logs/dados_vazados.txt
+[22:52:57] srv-dr em standby e sincronizado
+[22:53:00] Varrendo endpoints do CRM em busca de vulnerabilidades...
+[22:53:01] Endpoint vulneravel encontrado: /buscar-peca?nome=
+[22:53:02] Injetando payload malicioso:
+[22:54:02] Dados vazados e salvos pelo atacante!
+[22:54:02] Expostos: nomes, CNPJs e e-mails de 5 clientes B2B
+[22:54:02] Historico salvo em: /logs/dados_vazados.txt
+[22:54:07] Sobrecarregando srv-producao com requisicoes maliciosas...
+[22:54:16] PRODUCAO OFFLINE - CRM INDISPONIVEL
+[22:54:50] Confirmado SQL Injection e indisponibilidade total
+[22:54:50] Coordenador de Incidentes acionado
+[22:54:50] DPO notificado (LGPD)
+[22:54:50] Prazo de 72h para ANPD iniciado: 10/06/2026 22:54:50
+[22:55:15] Producao indisponivel, verificando DR...
+[22:55:50] DR integro - 5 clientes disponiveis
+[22:55:50] DR integro - 5 pedidos disponiveis
+[22:55:51] Redirecionando trafego do CRM para srv-dr...
+[22:55:52] FAILOVER CONCLUIDO - srv-dr assumiu a operacao!
+[22:56:13] Corrigindo vulnerabilidade de SQL Injection...
+[22:56:14] A causa raiz foi uma concatenacao direta de string na query SQL
+[22:56:14] A solução seria queries parametrizadas em todos os endpoints
+[22:56:15] Regras do WAF atualizadas para bloquear payloads similares
+[22:56:15] Reiniciando srv-producao com correcoes aplicadas...
+[22:56:58] srv-producao reiniciado - 5 clientes no banco
+[22:57:00] Ambiente principal corrigido, iniciar failback.
+[22:57:01] Passo 1: Sincronizando dados do DR para producao...
+[22:57:05] Pedidos sincronizados do DR: 5
+[22:57:05] Zero perda de dados confirmada
+[22:57:06] Passo 2: Validando ambiente principal...
+[22:57:16] Todos os testes passaram!
+[22:57:18] Passo 3: Migrando usuarios de volta de forma gradual...
+[22:57:19]   Equipe interna migrada com sucesso
+[22:57:20]   Representantes externos migrados com sucesso
+[22:57:21] FAILBACK CONCLUIDO!
+[22:57:21] Monitoramento intensivo ativado
+[22:57:21] srv-dr retornando ao modo standby
+[22:57:34] Notificacao formal preparada para ANPD (LGPD Art. 48)
+[22:57:34] Dados expostos: nomes, CNPJs e e-mails de 5 clientes B2B
+[22:57:34] Comunicado aos clientes aguardando aprovacao juridica
+[22:57:34] INCIDENTE ENCERRADO - OPERACAO NORMALIZADA
+[22:57:34] Failover: DR assumiu dentro do RTO de 8h (BIA)
+[22:57:34] Failback: retorno seguro ao ambiente principal
+[22:57:34] Vulnerabilidade corrigida: queries parametrizadas
+[22:57:34] LGPD: notificacao ANPD dentro do prazo de 72h
+[22:57:34] Log do atacante:  /logs/cenario2.log
+[22:57:34] Log da producao:  /app/logs/incidente.log
+[22:57:34] Log do DR:        /app/logs/incidente_dr.log
+[22:57:34] Evidencias:       /logs/dados_vazados.txt

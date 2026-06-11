@@ -3,7 +3,7 @@
 [CRIT] SQL Injection confirmado, tabela clientes invadida!
 [CRIT] Dados expostos: nomes, CNPJs e e-mails de 5 clientes B2B
 [CRIT] CRM INDISPONIVEL, servidor sobrecarregado!
-[CRIT] Servidor sobrecarregado - encerrando servicos...
+[CRIT] Servidor sobrecarregado, encerrando servicos...
 [OK] Vulnerabilidade solucionada!!
 [OK] srv-producao reiniciado e corrigido
 [FAILBACK] Validacao concluida - producao pronta

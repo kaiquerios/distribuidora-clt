@@ -1,6 +1,6 @@
 [STANDBY] DR em modo de espera, aguardando failover
 [CSIRT] Incidente P1 - SQL Injection confirmado
-[CSIRT] Timestamp: 10/06/2026 00:38:01
+[CSIRT] Timestamp: 10/06/2026 22:54:50
 [CSIRT] Prazo ANPD 72h iniciado
 [FAILOVER] DR assumiu a operacao, CRM disponivel via DR
 [FAILBACK] Dados sincronizados do DR para producao
