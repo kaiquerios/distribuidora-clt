@@ -1,3 +1,5 @@
+[Proposta com apenas script e demostração, versão não apresentada]
+
 # Segurança de Sistemas Computacionais — Projeto Acadêmico
 
 ## Sobre o Projeto
